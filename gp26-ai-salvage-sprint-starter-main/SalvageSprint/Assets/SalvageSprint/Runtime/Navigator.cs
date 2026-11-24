@@ -36,18 +36,24 @@ namespace SalvageSprint
 
         public TravelStatus Poll()
         {
-            if (!requested || Status == TravelStatus.Failed) return Status;
-            if (Time.frameCount == requestFrame) return Status;
+            if (!requested || Status == TravelStatus.Failed) {return Status;}
+
+            if (Time.frameCount == requestFrame) {return Status;}
+
             if (agent == null || !agent.isOnNavMesh)
-            { Status = TravelStatus.Failed; return Status; }
-            Status = NavigationFeedback.Classify(agent.isOnNavMesh, agent.pathPending,
-                agent.pathStatus == NavMeshPathStatus.PathComplete, agent.hasPath,
-                agent.remainingDistance, agent.stoppingDistance + .12f);
+            {Status = TravelStatus.Failed; return Status;}
+
+            Status = 
+            NavigationFeedback.Classify(agent.isOnNavMesh, agent.pathPending,
+            agent.pathStatus == NavMeshPathStatus.PathComplete, agent.hasPath,
+            agent.remainingDistance, agent.stoppingDistance + .12f);
+
             if ((transform.position - lastProgressPosition).sqrMagnitude > .04f)
             { lastProgressPosition = transform.position; lastProgressTime = Time.time; }
-            if ((Status == TravelStatus.Moving || Status == TravelStatus.Pending)
-                && Time.time - lastProgressTime > 5)
-                Status = TravelStatus.Failed;
+
+            if ((Status == TravelStatus.Moving || Status == TravelStatus.Pending) && Time.time - lastProgressTime > 5)
+            { Status = TravelStatus.Failed; }
+
             if (Status == TravelStatus.Failed && agent.isOnNavMesh)
             { agent.isStopped = true; agent.ResetPath(); }
             return Status;

@@ -2,10 +2,10 @@
 
 Keep this short. Bullet points, a small table and one diagram or code trace are enough. This is your checkpoint record, not an extra report. Replace the prompts as you work.
 
-Name:
-Exact Unity version:
-Checkpoint commit / repository:
-Current stage and anything unfinished:
+Name: Darren Scott
+Exact Unity version: 6000.3.26f1
+Checkpoint commit / repository: 
+Current stage and anything unfinished: Stage 2 
 
 ## Initial prediction
 
@@ -18,6 +18,15 @@ One question about NPC behaviour:
 ## One complete trace
 
 Use one actual situation. Include the observation data, derived facts, selected task and reason, movement request/result, and how feedback affects a later decision. Identify the responsible code locations. A tiny state diagram can accompany this trace.
+
+One situation I put the "Rival AI" in, was moving a wall from it's original position and blocking the cube with ID "11". 
+This resulted in the rival throwing a "Route Failure Error". From my understanding, the Rival AI only cares about what is considered the
+"closest" scrap by distance. The AI disregards any other observation data such as: whether the scrap is actually visible, remembered, or blocked.
+RivalBrain.Update() gathers observations through PickupSensor.Capture(), then uses DecisionPolicy.Infer() and DecisionPolicy.Choose() to derive facts
+and select a task, target and reason. When cube 11 is selected for collection, Navigator.Request() sends its position to NavMeshAgent.SetDestination() to
+request a route. Navigator.Poll() checks the result using NavigationFeedback.Classify(), and an incomplete route or more than five seconds without sufficient 
+progress can produce TravelStatus.Failed. RivalBrain.Update() responds by recording a six-second block for cube 11 in failedUntil, 
+which IsBlocked() makes available to subsequent observations. This feeds the failure back into later decisions.
 
 ## Scenario record
 
